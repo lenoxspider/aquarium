@@ -1,0 +1,20 @@
+export const betta = {
+  id: 'betta',
+  name: 'Betta',
+  length: 22,
+  girth: 0.55,
+  speed: 34,
+  turn: 2.4,
+  schooling: 0,
+  band: 'top',
+  tail: 'veil',
+  dorsal: 1.0,
+  tall: true,
+  pattern: 'iridescent',
+  colors: {
+    body: '#b03048',
+    belly: '#e0708a',
+    fin: '#d84860',
+    accent: '#7a4ec2',
+  },
+};

@@ -224,6 +224,7 @@ export class Fish {
     this.retarget = rng.range(0, 3);
     this.target = { x: this.x, y: this.y };
     this.burst = 0;
+    this.alive = true;
   }
 
   _retarget(tank) {
@@ -234,6 +235,7 @@ export class Fish {
   }
 
   update(dt, world) {
+    if (!this.alive) return;
     const tank = world.tank;
     this.px = this.x;
     this.py = this.y;

@@ -107,6 +107,29 @@ export class Sound {
     this._burst({ duration: 0.6, freq: 300, q: 1.2, gain: 0.28, sweep: 1500 });
   }
 
+  /** The low approach of something large. */
+  rumble() {
+    this._burst({ duration: 1.6, type: 'lowpass', freq: 140, q: 0.8, gain: 0.4, sweep: -60 });
+  }
+
+  gulp() {
+    if (!this.ctx || !this.enabled) return;
+    const ctx = this.ctx;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(320, t);
+    osc.frequency.exponentialRampToValueAtTime(80, t + 0.22);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26);
+    osc.connect(g);
+    g.connect(this.master);
+    osc.start(t);
+    osc.stop(t + 0.3);
+  }
+
   shutter() {
     this._burst({ duration: 0.09, freq: 2600, q: 2, gain: 0.18 });
   }

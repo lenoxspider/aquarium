@@ -39,7 +39,7 @@ export function desiredHeading(fish, world) {
   let sepY = 0;
 
   for (const other of school) {
-    if (other === fish) continue;
+    if (other === fish || !other.alive) continue;
     const ox = other.x - fish.x;
     const oy = other.y - fish.y;
     const d2 = ox * ox + oy * oy;
@@ -116,6 +116,21 @@ export function desiredHeading(fish, world) {
       dx += (sx / d) * 760 * weight * startle.t;
       dy += (sy / d) * 760 * weight * startle.t;
       speedScale = Math.max(speedScale, 1.9);
+    }
+  }
+
+  // A shark in the water outranks everything else.
+  const shark = world.shark;
+  if (shark && shark.active) {
+    const sx = fish.x - shark.x;
+    const sy = fish.y - shark.y;
+    const d2 = sx * sx + sy * sy;
+    if (d2 < 300 * 300 && d2 > 1) {
+      const d = Math.sqrt(d2);
+      const weight = Math.min(1, 300 / d);
+      dx += (sx / d) * 900 * weight;
+      dy += (sy / d) * 900 * weight;
+      speedScale = Math.max(speedScale, 1.75);
     }
   }
 

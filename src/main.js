@@ -11,6 +11,7 @@ import { Food } from './entities/food.js';
 import { Fish } from './entities/fish.js';
 import { Snail } from './entities/snail.js';
 import { Shrimp } from './entities/shrimp.js';
+import { Shark } from './entities/shark.js';
 import { SPECIES, STOCK } from './entities/species/index.js';
 import { Renderer } from './render/layers.js';
 import { PostFx } from './render/postfx.js';
@@ -26,7 +27,14 @@ const canvas = document.getElementById('tank');
 const surface = createSurface(canvas);
 const sound = new Sound();
 
-const state = { mood: DEFAULT_MOOD, biome: 'clear', autoCycle: false, uiMood: DEFAULT_MOOD };
+const state = {
+  mood: DEFAULT_MOOD,
+  biome: 'clear',
+  autoCycle: false,
+  uiMood: DEFAULT_MOOD,
+  sharkTimer: 50 + Math.random() * 40,
+  restock: [],
+};
 
 const world = {
   tank: new Tank(surface.width, surface.height),
@@ -39,6 +47,7 @@ const world = {
   fish: [],
   shrimps: [],
   snail: null,
+  shark: new Shark(),
   palette: resolvePalette(DEFAULT_MOOD, 'clear'),
   parallax: { x: 0, y: 0 },
   pointer: { x: 0, y: 0, active: false },
@@ -67,6 +76,35 @@ function takePhoto() {
   link.remove();
   sound.shutter();
 }
+
+function updateStats() {
+  const alive = world.fish.filter((f) => f.alive).length;
+  controls.setStats(`${alive} fish · ${world.shrimps.length} shrimp · 1 snail · ${SPECIES.length + 2} species`);
+}
+
+function launchShark() {
+  world.shark.launch(world.tank, Math.random() < 0.5);
+  state.sharkTimer = 70 + Math.random() * 70;
+  sound.rumble();
+}
+
+const sharkEvents = {
+  onLunge: (shark) => {
+    sound.startle();
+    world.water.addRipple(shark.x, shark.y, { strength: 1.6, born: loop.time });
+  },
+  onMiss: (shark) => {
+    world.water.addRipple(shark.x, shark.y, { strength: 1, born: loop.time });
+  },
+  onCatch: (fish, shark) => {
+    fish.alive = false;
+    sound.gulp();
+    world.water.addRipple(fish.x, fish.y, { strength: 1.4, born: loop.time });
+    world.water.addRipple(shark.x, shark.y, { strength: 1.2, born: loop.time });
+    state.restock.push({ species: fish.spec, at: loop.time + 45 });
+    updateStats();
+  },
+};
 
 /** Rebuild the static parts of the tank for the current size. */
 function build() {
@@ -107,6 +145,27 @@ function update(dt, time) {
 
   if (world.startle.t > 0) world.startle.t = Math.max(0, world.startle.t - dt * 0.85);
 
+  // Shark attacks arrive on their own schedule, or when the visitor insists.
+  if (world.shark.active) {
+    world.shark.update(dt, world, sharkEvents);
+  } else {
+    state.sharkTimer -= dt;
+    if (state.sharkTimer <= 0) launchShark();
+  }
+
+  for (let i = state.restock.length - 1; i >= 0; i -= 1) {
+    if (loop.time < state.restock[i].at) continue;
+    const entry = state.restock.splice(i, 1)[0];
+    const fish = new Fish(entry.species, world.tank, createRng((Math.random() * 1e9) | 0));
+    const fromLeft = Math.random() < 0.5;
+    const b = world.tank.bounds(fish.spec.band);
+    fish.x = fish.px = fromLeft ? -30 : world.tank.width + 30;
+    fish.y = fish.py = b.minY + Math.random() * (b.maxY - b.minY) * 0.6;
+    fish.angle = fromLeft ? 0 : Math.PI;
+    world.fish.push(fish);
+    updateStats();
+  }
+
   world.bubbles.update(dt, world.tank, time, (x) => {
     world.water.addRipple(x, world.tank.surfaceY + 2, { strength: 0.5, surface: true, born: time });
     sound.pop(0.5);
@@ -139,6 +198,9 @@ const controls = mountControls(document.getElementById('ui'), {
     sound.startle();
   },
   onPhoto: takePhoto,
+  onShark: () => {
+    if (world.shark.state === 'idle') launchShark();
+  },
   onSound: (on) => sound.setEnabled(on),
   onCycle: (on) => {
     state.autoCycle = on;
@@ -149,7 +211,7 @@ const controls = mountControls(document.getElementById('ui'), {
   },
 });
 
-controls.setStats(`${world.fish.length} fish · ${world.shrimps.length} shrimp · 1 snail · ${SPECIES.length + 2} species`);
+updateStats();
 input.attach();
 
 const intro = document.getElementById('intro');
@@ -172,7 +234,7 @@ window.addEventListener('resize', () => {
     surface.resize();
     build();
     stock();
-    controls.setStats(`${world.fish.length} fish · ${world.shrimps.length} shrimp · 1 snail · ${SPECIES.length + 2} species`);
+    updateStats();
   }, 160);
 });
 

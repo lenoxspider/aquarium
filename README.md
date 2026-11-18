@@ -28,16 +28,26 @@ Then visit `http://localhost:8000`.
   blackwater, or cold deep water. At night the deep biome glows: suspended
   motes turn bioluminescent.
 - **Startle** sends a disturbance through the water and everything scatters.
+- **Shark** summons the intruder right now. Left alone, the tank schedules an
+  attack of its own every minute or two.
 - **Photo** saves the current frame as a PNG.
 - **Sound** toggles a fully synthesised ambience: water bed, bubble blips,
   feeding splashes and a startle sweep. It starts when you enter the tank.
 
 ## Residents
 
-30 fish across six species, four cherry shrimp that hover and dart among the
+40 fish across nine species, four cherry shrimp that hover and dart among the
 stems, and one snail grazing the front glass, leaving a fading slime trail.
 Fish cast soft shadows on the sand, and touches, splashes and popping bubbles
 send ripples through the water.
+
+## Shark attacks
+
+Sometimes a shark silhouette crosses the glass: it enters slow, picks the
+nearest small fish, circles in, then lunges at full speed. Everything within
+reach of it panics and bolts. Sometimes it connects — the caught fish is gone,
+the panel count drops, and a replacement swims in from off-screen a while
+later. Sometimes it misses, and leaves hungry.
 
 ## Structure
 
@@ -49,6 +59,8 @@ aquarium/
 ├─ index.html              # canvas host, module entry
 ├─ src/
 │  ├─ main.js              # boot: build world, wire systems, start loop
+│  ├─ audio/
+│  │  └─ sound.js          # synthesised ambience: bed, blips, splashes
 │  ├─ core/
 │  │  ├─ loop.js           # fixed-step update + interpolated render
 │  │  ├─ canvas.js         # device-pixel-ratio sizing, resize handling
@@ -63,6 +75,9 @@ aquarium/
 │  │  └─ particulates.js   # suspended motes in two batched depth passes
 │  ├─ entities/
 │  │  ├─ fish.js           # steering integration + procedural body drawing
+│  │  ├─ snail.js          # glass grazer with a fading slime trail
+│  │  ├─ shrimp.js         # hovering, darting cherry shrimp
+│  │  ├─ shark.js          # intruder: enter, hunt, lunge, catch or miss
 │  │  ├─ species/          # one module per species (shape, palette, gait)
 │  │  └─ food.js           # flakes: sinking, drifting, resting, being eaten
 │  ├─ systems/
@@ -98,9 +113,3 @@ aquarium/
 - Audio is created only after the visitor clicks through the intro card, so the
   browser's autoplay rules are respected and the tank opens with a title beat.
 - Rendering targets 60 fps on GPU-composited browsers. Everything is Canvas 2D.
-│  ├─ audio/
-│  │  └─ sound.js          # synthesised ambience: bed, blips, splashes
-│  ├─ core/
-│  │  ├─ snail.js          # glass grazer with a fading slime trail
-│  │  ├─ shrimp.js         # hovering, darting cherry shrimp
-│  │  ├─ fish.js           # steering integration + procedural body drawing

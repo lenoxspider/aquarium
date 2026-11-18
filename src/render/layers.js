@@ -70,7 +70,8 @@ export class Renderer {
     const items = this._items;
     items.length = 0;
     world.plants.collect(items);
-    for (const fish of world.fish) items.push(fish);
+    for (const fish of world.fish) if (fish.alive) items.push(fish);
+    if (world.shark && world.shark.active) items.push(world.shark);
     for (const shrimp of world.shrimps) items.push(shrimp);
     world.bubbles.collect(items);
     world.food.collect(items);

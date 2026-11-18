@@ -36,6 +36,7 @@ const MARKUP = `
       <div class="actions">
         <button class="action" type="button" data-act="feed">Feed</button>
         <button class="action" type="button" data-act="startle">Startle</button>
+        <button class="action" type="button" data-act="shark">Shark</button>
         <button class="action" type="button" data-act="photo">Photo</button>
       </div>
       <p class="hint">Click the water to feed. Rest your pointer in the tank and the tetras will come to the glass.</p>
@@ -48,7 +49,7 @@ const MARKUP = `
  * The small glass panel in the corner. Returns handles rather than exposing
  * DOM nodes, so the scene never queries the page for its own controls.
  */
-export function mountControls(root, { mood, biome, onMood, onFeed, onStartle, onPhoto, onSound, onCycle, onBiome }) {
+export function mountControls(root, { mood, biome, onMood, onFeed, onStartle, onShark, onPhoto, onSound, onCycle, onBiome }) {
   root.innerHTML = MARKUP;
 
   const panelBody = root.querySelector('.panel__body');
@@ -94,6 +95,7 @@ export function mountControls(root, { mood, biome, onMood, onFeed, onStartle, on
   cycle.addEventListener('change', () => onCycle(cycle.checked));
   root.querySelector('[data-act="feed"]').addEventListener('click', onFeed);
   root.querySelector('[data-act="startle"]').addEventListener('click', onStartle);
+  root.querySelector('[data-act="shark"]').addEventListener('click', onShark);
   root.querySelector('[data-act="photo"]').addEventListener('click', onPhoto);
 
   return {
