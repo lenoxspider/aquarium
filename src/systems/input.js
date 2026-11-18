@@ -9,6 +9,7 @@ export class Input {
     this.onFeed = onFeed;
     this.parallax = { x: 0, y: 0 };
     this.target = { x: 0, y: 0 };
+    this.pointer = { x: 0, y: 0, active: false };
     this._onMove = this._onMove.bind(this);
     this._onDown = this._onDown.bind(this);
     this._onLeave = this._onLeave.bind(this);
@@ -29,6 +30,9 @@ export class Input {
     const h = this.surface.height;
     this.target.x = (event.clientX / w - 0.5) * 26;
     this.target.y = (event.clientY / h - 0.5) * 16;
+    this.pointer.x = event.clientX;
+    this.pointer.y = event.clientY;
+    this.pointer.active = true;
   }
 
   _onDown(event) {
@@ -39,6 +43,7 @@ export class Input {
   _onLeave() {
     this.target.x = 0;
     this.target.y = 0;
+    this.pointer.active = false;
   }
 
   _onKey(event) {

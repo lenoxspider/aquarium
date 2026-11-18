@@ -6,6 +6,7 @@ export const guppy = {
   speed: 44,
   turn: 3.6,
   schooling: 0.35,
+  curious: true,
   band: 'top',
   tail: 'fan',
   dorsal: 0.42,

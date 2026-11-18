@@ -1,10 +1,11 @@
 import { mix, rgba } from '../core/color.js';
 
 /**
- * Time-of-day keyframes. Each stop describes the same tank under different
- * light, so the palette can be interpolated without any special cases.
+ * Time-of-day keyframes per biome. Each stop describes the same tank under
+ * different light, so the palette can be interpolated without special cases.
  */
-const STOPS = [
+const BIOMES = {
+  clear: [
   {
     at: 0.0,
     top: '#7fd6d6',
@@ -45,9 +46,97 @@ const STOPS = [
     tint: '#123049',
     ambient: 0.32,
   },
-];
+  ],
+  blackwater: [
+    {
+      at: 0.0,
+      top: '#d8a86a',
+      mid: '#8a5a2e',
+      deep: '#3a2412',
+      bottom: '#1a0f08',
+      light: '#ffe0a8',
+      tint: '#7a4e26',
+      ambient: 0.7,
+    },
+    {
+      at: 0.35,
+      top: '#c99552',
+      mid: '#7a4c26',
+      deep: '#33200f',
+      bottom: '#150c06',
+      light: '#ffd98f',
+      tint: '#6d4420',
+      ambient: 0.9,
+    },
+    {
+      at: 0.7,
+      top: '#8a6a4a',
+      mid: '#4a3018',
+      deep: '#1e1208',
+      bottom: '#0c0704',
+      light: '#ffbf7a',
+      tint: '#3f2a14',
+      ambient: 0.55,
+    },
+    {
+      at: 1.0,
+      top: '#2a1c10',
+      mid: '#150d06',
+      deep: '#080402',
+      bottom: '#030201',
+      light: '#c9a06a',
+      tint: '#120b05',
+      ambient: 0.3,
+    },
+  ],
+  deep: [
+    {
+      at: 0.0,
+      top: '#6fc4d8',
+      mid: '#1e6a8a',
+      deep: '#0a2a4a',
+      bottom: '#041426',
+      light: '#d8f0ff',
+      tint: '#1e5a7a',
+      ambient: 0.7,
+    },
+    {
+      at: 0.35,
+      top: '#4aa8c8',
+      mid: '#145a7a',
+      deep: '#062038',
+      bottom: '#020e1c',
+      light: '#cfeeff',
+      tint: '#14506e',
+      ambient: 0.9,
+    },
+    {
+      at: 0.7,
+      top: '#3a5a8a',
+      mid: '#1a3050',
+      deep: '#081428',
+      bottom: '#030a14',
+      light: '#9fc4ff',
+      tint: '#16304e',
+      ambient: 0.55,
+    },
+    {
+      at: 1.0,
+      top: '#0e1e3a',
+      mid: '#061226',
+      deep: '#020810',
+      bottom: '#01040a',
+      light: '#7fa8ff',
+      tint: '#0a1c30',
+      ambient: 0.3,
+    },
+  ],
+};
 
-export function resolvePalette(t) {
+export const BIOME_IDS = Object.keys(BIOMES);
+
+export function resolvePalette(t, biome = 'clear') {
+  const STOPS = BIOMES[biome] || BIOMES.clear;
   const v = Math.min(1, Math.max(0, t));
   let i = 0;
   while (i < STOPS.length - 2 && v > STOPS[i + 1].at) i += 1;
@@ -66,6 +155,8 @@ export function resolvePalette(t) {
     ambient: a.ambient + (b.ambient - a.ambient) * k,
   };
   palette.key = `${palette.top}|${palette.mid}|${palette.deep}|${palette.bottom}|${palette.light}|${palette.ambient.toFixed(3)}`;
+  palette.biome = biome;
+  palette.glow = palette.ambient < 0.55;
   return palette;
 }
 
@@ -81,6 +172,39 @@ export class Water {
   constructor() {
     this._key = '';
     this._grads = null;
+    this.ripples = [];
+  }
+
+  /** A ring spreading from a touch, a splash or a popping bubble. */
+  addRipple(x, y, { strength = 1, surface = false, born = 0 } = {}) {
+    this.ripples.push({ x, y, strength, surface, born, life: surface ? 1.6 : 1.1 });
+    if (this.ripples.length > 28) this.ripples.shift();
+  }
+
+  drawRipples(ctx, tank, time, p) {
+    if (!this.ripples.length) return;
+    this.ripples = this.ripples.filter((r) => time - r.born < r.life);
+    if (!this.ripples.length) return;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (const r of this.ripples) {
+      const age = time - r.born;
+      const fade = 1 - age / r.life;
+      for (let ring = 0; ring < 2; ring += 1) {
+        const a = age - ring * 0.16;
+        if (a < 0) continue;
+        const radius = 4 + a * 130;
+        const alpha = r.strength * fade * (ring === 0 ? 0.16 : 0.08);
+        ctx.beginPath();
+        if (r.surface) ctx.ellipse(r.x, r.y, radius, radius * 0.22, 0, 0, Math.PI * 2);
+        else ctx.arc(r.x, r.y, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = rgba(p.light, alpha);
+        ctx.lineWidth = 1.6 - ring * 0.6;
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
   }
 
   _makeGradients(ctx, tank, p) {

@@ -6,6 +6,7 @@ export const neonTetra = {
   speed: 58,
   turn: 4.4,
   schooling: 1,
+  curious: true,
   band: 'open',
   tail: 'fork',
   dorsal: 0.3,

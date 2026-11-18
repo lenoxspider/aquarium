@@ -19,9 +19,25 @@ Then visit `http://localhost:8000`.
 
 - **Click the water** (or press space, or the Feed button) to drop flakes; fish
   notice and come for them.
+- **Rest the pointer** in the water: curious species (tetras, guppies) swim over
+  to inspect the finger on the glass.
 - **Move the pointer** to look through the glass: the scene parallaxes by depth.
 - **Light slider** moves the tank from dawn through day and dusk to night.
+- **Auto day and night** lets the light cycle on its own, four minutes per day.
+- **Biome** switches the whole water column: clear water, tannin-stained
+  blackwater, or cold deep water. At night the deep biome glows: suspended
+  motes turn bioluminescent.
 - **Startle** sends a disturbance through the water and everything scatters.
+- **Photo** saves the current frame as a PNG.
+- **Sound** toggles a fully synthesised ambience: water bed, bubble blips,
+  feeding splashes and a startle sweep. It starts when you enter the tank.
+
+## Residents
+
+30 fish across six species, four cherry shrimp that hover and dart among the
+stems, and one snail grazing the front glass, leaving a fading slime trail.
+Fish cast soft shadows on the sand, and touches, splashes and popping bubbles
+send ripples through the water.
 
 ## Structure
 
@@ -79,4 +95,12 @@ aquarium/
 
 - `window.aquarium` exposes `{ world, loop, surface, renderer }` for console
   experiments; the scene does not depend on it.
+- Audio is created only after the visitor clicks through the intro card, so the
+  browser's autoplay rules are respected and the tank opens with a title beat.
 - Rendering targets 60 fps on GPU-composited browsers. Everything is Canvas 2D.
+│  ├─ audio/
+│  │  └─ sound.js          # synthesised ambience: bed, blips, splashes
+│  ├─ core/
+│  │  ├─ snail.js          # glass grazer with a fading slime trail
+│  │  ├─ shrimp.js         # hovering, darting cherry shrimp
+│  │  ├─ fish.js           # steering integration + procedural body drawing

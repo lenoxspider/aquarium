@@ -75,7 +75,7 @@ export class Bubbles {
     return bubble;
   }
 
-  update(dt, tank, time) {
+  update(dt, tank, time, onPop) {
     const rng = this.rng;
 
     for (const emitter of this.emitters) {
@@ -97,7 +97,10 @@ export class Bubbles {
       if (!bubble.alive) continue;
       bubble.y -= bubble.speed * dt;
       bubble.x += Math.sin(time * bubble.wobble + bubble.phase) * bubble.amp * dt;
-      if (bubble.y < tank.surfaceY + 4) bubble.alive = false;
+      if (bubble.y < tank.surfaceY + 4) {
+        bubble.alive = false;
+        if (onPop) onPop(bubble.x);
+      }
     }
   }
 

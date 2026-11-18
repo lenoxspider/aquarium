@@ -90,6 +90,21 @@ export function desiredHeading(fish, world) {
     speedScale = 1.7;
   }
 
+  // A finger on the glass: curious species come over to inspect it.
+  const ptr = world.pointer;
+  if (ptr && ptr.active && spec.curious && !(startle && startle.t > 0)) {
+    const px = ptr.x - fish.x;
+    const py = ptr.y - fish.y;
+    const d2 = px * px + py * py;
+    if (d2 > 34 * 34 && d2 < 260 * 260) {
+      dx += px * 0.55;
+      dy += py * 0.55;
+    } else if (d2 <= 34 * 34 && d2 > 1) {
+      dx -= px * 0.8;
+      dy -= py * 0.8;
+    }
+  }
+
   // Startle: everything turns away from the disturbance.
   if (startle && startle.t > 0) {
     const sx = fish.x - startle.x;

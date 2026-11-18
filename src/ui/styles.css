@@ -49,6 +49,8 @@ body {
 
 .panel {
   pointer-events: auto;
+  position: relative;
+  z-index: 2;
   width: 270px;
   max-width: calc(100vw - 40px);
   padding: 14px 16px 16px;
@@ -66,6 +68,120 @@ body {
   justify-content: space-between;
   gap: 12px;
 }
+
+.panel__head-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.panel__toggle--on {
+  color: var(--ink);
+  background: rgba(86, 214, 224, 0.22);
+  border-color: rgba(86, 214, 224, 0.5);
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: rgba(6, 26, 34, 0.6);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.check input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 90% at 50% 12%, rgba(6, 40, 52, 0.72), rgba(1, 8, 12, 0.94));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 800ms ease;
+}
+
+.intro--gone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro__card {
+  text-align: center;
+  padding: 36px 44px;
+  border-radius: 24px;
+  border: 1px solid var(--stroke);
+  background: rgba(4, 20, 28, 0.5);
+  box-shadow: var(--shadow);
+}
+
+.intro__card h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.intro__card p {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.intro__enter {
+  margin-top: 24px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(86, 214, 224, 0.45);
+  background: rgba(86, 214, 224, 0.14);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.intro__enter:hover {
+  background: rgba(86, 214, 224, 0.28);
+  transform: translateY(-1px);
+}
+
+.intro__hint {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--faint);
+}
+
 
 .panel h1 {
   margin: 0;

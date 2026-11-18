@@ -40,6 +40,9 @@ export class Particulates {
   }
 
   _draw(ctx, p, zMin, zMax) {
+    const glow = p.glow;
+    ctx.save();
+    if (glow) ctx.globalCompositeOperation = 'lighter';
     for (let bucket = 0; bucket < 3; bucket += 1) {
       const lo = zMin + ((zMax - zMin) * bucket) / 3;
       const hi = zMin + ((zMax - zMin) * (bucket + 1)) / 3;
@@ -52,9 +55,21 @@ export class Particulates {
         any = true;
       }
       if (!any) continue;
-      ctx.fillStyle = rgba(p.light, 0.1 + bucket * 0.13);
+      ctx.fillStyle = rgba(glow ? '#9fe8ff' : p.light, glow ? 0.22 + bucket * 0.2 : 0.1 + bucket * 0.13);
       ctx.fill();
+
+      if (glow) {
+        ctx.beginPath();
+        for (const m of this.motes) {
+          if (m.z < lo || m.z >= hi) continue;
+          ctx.moveTo(m.x, m.y);
+          ctx.arc(m.x, m.y, m.size * (1.6 + m.z * 2.4), 0, Math.PI * 2);
+        }
+        ctx.fillStyle = rgba('#5fd8ff', 0.05 + bucket * 0.04);
+        ctx.fill();
+      }
     }
+    ctx.restore();
   }
 
   drawBack(ctx, p) {
