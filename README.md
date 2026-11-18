@@ -17,6 +17,20 @@ python -m http.server 8000
 
 Then visit `http://localhost:8000`.
 
+## Python environment
+
+Any Python dependency lives in a virtual environment, never in the global
+interpreter. Create and activate it before installing anything:
+
+```
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # macOS / Linux
+```
+
+`venv/` and `.venv/` are gitignored. The runtime itself requires no Python
+packages; the server above is the only reason Python is involved.
+
 ## Planned structure
 
 One file never holds the whole tank. Each module owns a single concern and its

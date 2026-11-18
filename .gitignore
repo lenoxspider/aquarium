@@ -12,6 +12,10 @@ desktop.ini
 node_modules/
 dist/
 .cache/
+venv/
+.venv/
+__pycache__/
+*.pyc
 
 # Logs
 *.log
