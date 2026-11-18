@@ -3,8 +3,9 @@
  * feel, and clicks that drop food into the water.
  */
 export class Input {
-  constructor({ surface, onFeed }) {
+  constructor({ surface, canvas, onFeed }) {
     this.surface = surface;
+    this.canvas = canvas;
     this.onFeed = onFeed;
     this.parallax = { x: 0, y: 0 };
     this.target = { x: 0, y: 0 };
@@ -14,11 +15,12 @@ export class Input {
     this._onKey = this._onKey.bind(this);
   }
 
-  attach(target = window) {
-    this.targetEl = target;
-    target.addEventListener('pointermove', this._onMove, { passive: true });
-    target.addEventListener('pointerdown', this._onDown);
-    target.addEventListener('pointerleave', this._onLeave);
+  attach() {
+    // Feeding listens on the canvas only, so clicks on the control panel never
+    // drop food behind the user's back.
+    this.canvas.addEventListener('pointerdown', this._onDown);
+    window.addEventListener('pointermove', this._onMove, { passive: true });
+    window.addEventListener('pointerleave', this._onLeave);
     window.addEventListener('keydown', this._onKey);
   }
 

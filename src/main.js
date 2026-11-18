@@ -38,6 +38,7 @@ const world = {
 const renderer = new Renderer(surface, world, new PostFx());
 const input = new Input({
   surface,
+  canvas,
   onFeed: (x, y) => world.food.spawn(x, y),
 });
 
@@ -87,12 +88,13 @@ const controls = mountControls(document.getElementById('ui'), {
   onStartle: () => {
     world.startle.x = world.tank.width * (0.2 + Math.random() * 0.6);
     world.startle.y = world.tank.height * (0.28 + Math.random() * 0.36);
-    world.startle.t = 1;
+    world.startle.t = 1.3;
+    for (const fish of world.fish) fish.burst = Math.max(fish.burst, 0.7);
   },
 });
 
 controls.setStats(`${world.fish.length} fish · ${SPECIES.length} species`);
-input.attach(window);
+input.attach();
 
 const loop = new Loop({
   update,

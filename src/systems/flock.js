@@ -82,8 +82,8 @@ export function desiredHeading(fish, world) {
   if (fish.y < b.minY + margin) dy += (b.minY + margin - fish.y) * 2.4;
   if (fish.y > b.maxY - margin) dy -= (fish.y - (b.maxY - margin)) * 3.2;
 
-  // Food.
-  const bite = food.nearest(fish.x, fish.y, 260);
+  // Food, unless the water is in panic: a scared fish is not hungry.
+  const bite = startle && startle.t > 0.35 ? null : food.nearest(fish.x, fish.y, 260);
   if (bite) {
     dx += (bite.x - fish.x) * 2.6;
     dy += (bite.y - fish.y) * 2.6;
@@ -97,9 +97,9 @@ export function desiredHeading(fish, world) {
     const d2 = sx * sx + sy * sy;
     if (d2 > 1) {
       const d = Math.sqrt(d2);
-      const weight = Math.min(1, 380 / d);
-      dx += (sx / d) * 620 * weight * startle.t;
-      dy += (sy / d) * 620 * weight * startle.t;
+      const weight = Math.min(1, 460 / d);
+      dx += (sx / d) * 760 * weight * startle.t;
+      dy += (sy / d) * 760 * weight * startle.t;
       speedScale = Math.max(speedScale, 1.9);
     }
   }

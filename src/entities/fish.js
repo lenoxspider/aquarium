@@ -273,7 +273,13 @@ export class Fish {
     this.phase += dt * (5 + this.speed * 0.09) * 2;
     if (this.phase > TAU * 1000) this.phase -= TAU * 1000;
 
-    if (world.food.tryEat(this.x, this.y, this.length * 0.42)) {
+    // Eat with the mouth, not the centre of mass: the nose leads the body by
+    // half a body length, which is exactly where a flake disappears.
+    const scale = depthScale(this.z);
+    const reach = this.length * scale;
+    const mouthX = this.x + Math.cos(this.angle) * reach * 0.45;
+    const mouthY = this.y + Math.sin(this.angle) * reach * 0.45;
+    if (world.food.tryEat(mouthX, mouthY, reach * 0.4 + 5)) {
       this.burst = 0.25;
     }
   }
