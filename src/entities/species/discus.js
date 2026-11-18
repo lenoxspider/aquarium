@@ -1,0 +1,20 @@
+export const discus = {
+  id: 'discus',
+  name: 'Discus',
+  length: 36,
+  girth: 1.3,
+  speed: 28,
+  turn: 1.9,
+  schooling: 0.22,
+  band: 'open',
+  tail: 'fan',
+  dorsal: 0.42,
+  tall: true,
+  pattern: 'disc',
+  colors: {
+    body: '#d98736',
+    belly: '#f0c07a',
+    fin: '#c06a26',
+    accent: '#7a3f14',
+  },
+};

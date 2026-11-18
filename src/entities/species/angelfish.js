@@ -1,0 +1,20 @@
+export const angelfish = {
+  id: 'angelfish',
+  name: 'Angelfish',
+  length: 40,
+  girth: 1.18,
+  speed: 31,
+  turn: 1.7,
+  schooling: 0.14,
+  band: 'open',
+  tail: 'veil',
+  dorsal: 0.62,
+  tall: true,
+  pattern: 'bars',
+  colors: {
+    body: '#dbe6ee',
+    belly: '#f8fbfd',
+    fin: '#c3d2dc',
+    accent: '#2b3a45',
+  },
+};

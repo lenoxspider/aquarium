@@ -1,0 +1,19 @@
+export const guppy = {
+  id: 'guppy',
+  name: 'Guppy',
+  length: 18,
+  girth: 0.5,
+  speed: 44,
+  turn: 3.6,
+  schooling: 0.35,
+  band: 'top',
+  tail: 'fan',
+  dorsal: 0.42,
+  pattern: 'spots',
+  colors: {
+    body: '#cfd9e2',
+    belly: '#f3f8fc',
+    fin: '#ff9f45',
+    accent: '#e2557a',
+  },
+};
